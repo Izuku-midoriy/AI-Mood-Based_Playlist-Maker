@@ -1,14 +1,16 @@
 import datetime
 import psycopg2
+import os
+import urllib.parse as up
 
 def log_entry(text, mood, url):
     try:
-        conn = psycopg2.connect(
-            host="mood-ai-466609:asia-south1:mood-detect",
-            database="mood",
-            user="postgres",
-            password="1234"
-        )
+        db_url = os.environ.get("DATABASE_URL")
+
+        # Parse DB URL for psycopg2 compatibility
+        up.uses_netloc.append("postgres")
+        conn = psycopg2.connect(db_url)
+
         cursor = conn.cursor()
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS mood_logs (
